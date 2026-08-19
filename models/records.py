@@ -15,3 +15,4 @@ class Record(db.Model):
     payment_status = db.Column(db.String(20), nullable=False,default="unpaid")
     created_at = db.Column(db.DateTime,default=db.func.current_timestamp())
     store_id = db.Column(db.Integer,db.ForeignKey("stores.store_id"),nullable=False)
+    admin_id = db.Column(db.String(50),nullable=False)

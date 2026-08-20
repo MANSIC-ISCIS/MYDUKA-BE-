@@ -88,3 +88,16 @@ def update_record(record_id):
 
     db.session.commit()
     return jsonify({"message": "Record updated successfully"}), 200
+
+# Route to delete a record
+@records_bp.route("/records/<int:record_id>", methods=["DELETE"])
+def delete_record(record_id):
+    record = Record.query.get(record_id)
+
+    if not record:
+        return jsonify({"error": "Record not found"}), 404
+
+    db.session.delete(record)
+    db.session.commit()
+
+    return jsonify({"message": "Record deleted successfully"}), 200

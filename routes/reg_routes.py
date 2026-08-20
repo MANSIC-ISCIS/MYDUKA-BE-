@@ -43,3 +43,46 @@ def register_merchant():
     return jsonify({
         "message": "Merchant registered successfully"
     }), 201
+
+# admin registration from invitation token
+@reg_bp.route("/register-admin/<token>", methods=["POST"])
+def register_admin(token):
+
+    invitation = Invitation.query.filter_by(
+        token=token,
+        role="admin",
+        used=False
+    ).first()
+
+    if not invitation:
+        return jsonify({
+            "error": "Invalid or expired invitation"
+        }), 400
+
+    data = request.get_json()
+
+    name = data.get("name")
+    password = data.get("password")
+
+    if not name or not password:
+        return jsonify({
+            "error": "Name and password are required"
+        }), 400
+
+    user = user(
+        name=name,
+        email=invitation.email,
+        role="admin"
+    )
+
+    user.set_password(password)
+
+    db.session.add(user)
+
+    invitation.used = True
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Admin registration successful"
+    }), 201

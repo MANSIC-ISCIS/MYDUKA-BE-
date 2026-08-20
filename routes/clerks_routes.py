@@ -36,3 +36,16 @@ def get_clerks():
             "created_at": c.created_at}
         for c in clerks
     ]), 200
+
+# Route to get one clerk
+@clerk.route("/clerks/<int:clerk_id>", methods=["GET"])
+def get_clerk(clerk_id):
+    clerk = Clerk.query.get(clerk_id)
+
+    if not clerk:
+        return jsonify({"error": "Clerk not found."}), 404
+
+    return jsonify({ "clerk_id": clerk.clerk_id,
+        "clerk_name": clerk.clerk_name, "admin_id": clerk.admin_id,
+        "store_id": clerk.store_id, "created_at": clerk.created_at
+    }), 200

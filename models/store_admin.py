@@ -19,6 +19,12 @@ class StoreAdmin(db.Model):
         nullable=False
     )
 
+    is_active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
     merchant = db.relationship(
         "Merchant",
         back_populates="admins"

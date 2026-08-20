@@ -12,6 +12,7 @@ class StoreAdminSchema(ma.SQLAlchemyAutoSchema):
     admin_name = ma.auto_field()
     merchant_id = ma.auto_field()
     store_id = ma.auto_field()
+    is_active = ma.auto_field()
 
 
 store_admin_schema = StoreAdminSchema()

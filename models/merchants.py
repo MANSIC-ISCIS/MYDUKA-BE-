@@ -13,5 +13,17 @@ class Merchant(db.Model):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    stores = db.relationship(
+        "Store",
+        back_populates="merchant",
+        cascade="all, delete-orphan"
+    )
+
+    admins = db.relationship(
+        "StoreAdmin",
+        back_populates="merchant",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Merchant {self.merchant_name}>"

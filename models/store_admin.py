@@ -19,5 +19,15 @@ class StoreAdmin(db.Model):
         nullable=False
     )
 
+    merchant = db.relationship(
+        "Merchant",
+        back_populates="admins"
+    )
+
+    store = db.relationship(
+        "Store",
+        back_populates="admins"
+    )
+
     def __repr__(self):
         return f"<StoreAdmin {self.admin_name}>"

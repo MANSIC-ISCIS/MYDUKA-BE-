@@ -63,3 +63,28 @@ def get_record(record_id):
         "store_id": record.store_id, "admin_id": record.admin_id,
         "created_at": record.created_at
     }), 200
+
+# Route to update a record
+@records_bp.route("/records/<int:record_id>", methods=["PATCH"])
+def update_record(record_id):
+    record = Record.query.get(record_id)
+
+    if not record:
+        return jsonify({"error": "Record not found"}), 404
+    data = request.get_json()
+
+    if "items_received" in data:
+        record.items_received = data["items_received"]
+    if "items_in_stock" in data:
+        record.items_in_stock = data["items_in_stock"]
+    if "items_spoilt" in data:
+        record.items_spoilt = data["items_spoilt"]
+    if "buying_price" in data:
+        record.buying_price = data["buying_price"]
+    if "selling_price" in data:
+        record.selling_price = data["selling_price"]
+    if "payment_status" in data:
+        record.payment_status = data["payment_status"]
+
+    db.session.commit()
+    return jsonify({"message": "Record updated successfully"}), 200

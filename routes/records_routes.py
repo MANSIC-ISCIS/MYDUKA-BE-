@@ -46,3 +46,20 @@ def get_records():
             "admin_id": record.admin_id,"created_at": record.created_at
         }
         for record in records]), 200
+
+# Route to get one record
+@records_bp.route("/records/<int:record_id>", methods=["GET"])
+def get_record(record_id):
+    record = Record.query.get(record_id)
+
+    if not record:
+        return jsonify({"error": "Record not found"}), 404
+
+    return jsonify({"record_id": record.record_id,
+        "clerk_id": record.clerk_id, "product_id": record.product_id,
+        "items_received": record.items_received, "items_in_stock": record.items_in_stock,
+        "items_spoilt": record.items_spoilt, "buying_price": float(record.buying_price),
+        "selling_price": float(record.selling_price), "payment_status": record.payment_status,
+        "store_id": record.store_id, "admin_id": record.admin_id,
+        "created_at": record.created_at
+    }), 200

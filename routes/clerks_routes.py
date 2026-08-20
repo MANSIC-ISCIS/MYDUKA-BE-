@@ -64,3 +64,16 @@ def update_clerk(clerk_id):
     db.session.commit()
 
     return jsonify({"message": "Clerk updated successfully."}), 200
+
+# Route to delete a clerk
+@clerk.route("/clerks/<int:clerk_id>", methods=["DELETE"])
+def delete_clerk(clerk_id):
+    clerk = Clerk.query.get(clerk_id)
+
+    if not clerk:
+        return jsonify({"error": "Clerk not found."}), 404
+
+    db.session.delete(clerk)
+    db.session.commit()
+
+    return jsonify({ "message": "Clerk deleted successfully."}), 200

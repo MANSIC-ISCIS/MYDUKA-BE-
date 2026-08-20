@@ -3,10 +3,10 @@ from extensions import db
 from models.records import Record
 from models.payments import Payment
 
-payment = Blueprint("payment", __name__)
+payment_bp = Blueprint("payment", __name__)
 
 #  Route to create a payment
-@payment.route("/payments", methods=["POST"])
+@payment_bp.route("/payments", methods=["POST"])
 def create_payment():
     data = request.get_json()
 
@@ -33,7 +33,7 @@ def create_payment():
         "status": new_payment.status}), 201
 
 # Route to get all payments
-@payment.route("/payments", methods=["GET"])
+@payment_bp.route("/payments", methods=["GET"])
 def get_payments():
     payments = Payment.query.all()
 
@@ -46,7 +46,7 @@ def get_payments():
     ]), 200
 
 # Route to get one payment
-@payment.route("/payments/<int:payment_id>", methods=["GET"])
+@payment_bp.route("/payments/<int:payment_id>", methods=["GET"])
 def get_payment(payment_id):
     payment_record = Payment.query.get(payment_id)
 

@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models.clerk import Clerk
 
-clerk = Blueprint("clerk", __name__)
+clerk_bp = Blueprint("clerk", __name__)
 
 # A clerk route to create a new clerk
-@clerk.route("/clerks", methods=["POST"])
+@clerk_bp.route("/clerks", methods=["POST"])
 def create_clerk():
     data = request.get_json()
 
@@ -26,7 +26,7 @@ def create_clerk():
         "clerk_id": new_clerk.clerk_id }), 201
 
 # Route to get all clerks
-@clerk.route("/clerks", methods=["GET"])
+@clerk_bp.route("/clerks", methods=["GET"])
 def get_clerks():
     clerks = Clerk.query.all()
 
@@ -38,7 +38,7 @@ def get_clerks():
     ]), 200
 
 # Route to get one clerk
-@clerk.route("/clerks/<int:clerk_id>", methods=["GET"])
+@clerk_bp.route("/clerks/<int:clerk_id>", methods=["GET"])
 def get_clerk(clerk_id):
     clerk = Clerk.query.get(clerk_id)
 
@@ -51,7 +51,7 @@ def get_clerk(clerk_id):
     }), 200
 
 # Route to update a clerk
-@clerk.route("/clerks/<int:clerk_id>", methods=["PATCH"])
+@clerk_bp.route("/clerks/<int:clerk_id>", methods=["PATCH"])
 def update_clerk(clerk_id):
     clerk = Clerk.query.get(clerk_id)
 
@@ -66,7 +66,7 @@ def update_clerk(clerk_id):
     return jsonify({"message": "Clerk updated successfully."}), 200
 
 # Route to delete a clerk
-@clerk.route("/clerks/<int:clerk_id>", methods=["DELETE"])
+@clerk_bp.route("/clerks/<int:clerk_id>", methods=["DELETE"])
 def delete_clerk(clerk_id):
     clerk = Clerk.query.get(clerk_id)
 

@@ -6,7 +6,7 @@ class Record(db.Model):
 
     record_id = db.Column(db.Integer,primary_key=True)
     clerk_id = db.Column(db.Integer,db.ForeignKey("clerks.clerk_id"),nullable=False)
-    product_id = db.Column(db.Integer,nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.product_id"), nullable=False)
     items_received = db.Column(db.Integer,nullable=False)
     items_in_stock = db.Column(db.Integer,nullable=False)
     items_spoilt = db.Column(db.Integer,default=0,nullable=False)

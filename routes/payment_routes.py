@@ -1,0 +1,33 @@
+from flask import Blueprint, request, jsonify
+from extensions import db
+from models.records import Record
+from models.payments import Payment
+
+payment = Blueprint("payment", __name__)
+
+#  Route to create a payment
+@payment.route("/payments", methods=["POST"])
+def create_payment():
+    data = request.get_json()
+
+    record_id = data.get("record_id")
+    amount = data.get("amount")
+    phone_number = data.get("phone_number")
+
+    if not record_id or not amount or not phone_number:
+        return jsonify({"error": "record_id, amount and phone_number are required"}), 400
+    record = Record.query.get(record_id)
+
+    if not record:
+        return jsonify({"error": "Record not found"}), 404
+
+    new_payment = Payment(record_id=record_id,
+        amount=amount,
+        phone_number=phone_number)
+
+    db.session.add(new_payment)
+    db.session.commit()
+
+    return jsonify({"message": "Payment created successfully",
+        "payment_id": new_payment.payment_id,
+        "status": new_payment.status}), 201

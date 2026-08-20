@@ -24,3 +24,15 @@ def create_clerk():
 
     return jsonify({"message": "Clerk created successfully.",
         "clerk_id": new_clerk.clerk_id }), 201
+
+# Route to get all clerks
+@clerk.route("/clerks", methods=["GET"])
+def get_clerks():
+    clerks = Clerk.query.all()
+
+    return jsonify([
+        {"clerk_id": c.clerk_id, "clerk_name": c.clerk_name,
+            "admin_id": c.admin_id, "store_id": c.store_id,
+            "created_at": c.created_at}
+        for c in clerks
+    ]), 200

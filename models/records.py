@@ -1,6 +1,7 @@
 # Records model
 from extensions import db
 
+# Create a new Record class
 class Record(db.Model):
     __tablename__ = "records"
 
@@ -15,4 +16,9 @@ class Record(db.Model):
     payment_status = db.Column(db.String(20), nullable=False,default="unpaid")
     created_at = db.Column(db.DateTime,default=db.func.current_timestamp())
     store_id = db.Column(db.Integer,db.ForeignKey("stores.store_id"),nullable=False)
-    admin_id = db.Column(db.String(50),nullable=False)
+    admin_id = db.Column(db.String(50), db.ForeignKey("store_admins.admin_id"),nullable=False)
+    supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.supplier_id"), nullable=False)
+
+# Set up relationships
+    payments = db.relationship("Payment", back_populates="record")
+    product = db.relationship("Product", back_populates="records")

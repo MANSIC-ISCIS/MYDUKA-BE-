@@ -16,3 +16,6 @@ class Payment(db.Model):
 
     def __repr__(self):
         return f"<Payment {self.payment_id}>"
+
+# Set up relationships
+    record = db.relationship("Record", back_populates="payments")

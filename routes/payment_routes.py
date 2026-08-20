@@ -38,13 +38,25 @@ def get_payments():
     payments = Payment.query.all()
 
     return jsonify([
-        {
-            "payment_id": p.payment_id,
-            "record_id": p.record_id,
-            "amount": float(p.amount),
-            "phone_number": p.phone_number,
-            "status": p.status,
-            "created_at": p.created_at
+        {"payment_id": p.payment_id, "record_id": p.record_id,
+            "amount": float(p.amount),"phone_number": p.phone_number,
+            "status": p.status,"created_at": p.created_at
         }
         for p in payments
     ]), 200
+
+# Route to get one payment
+@payment.route("/payments/<int:payment_id>", methods=["GET"])
+def get_payment(payment_id):
+    payment_record = Payment.query.get(payment_id)
+
+    if not payment_record:
+        return jsonify({"error": "Payment not found"}), 404
+
+    return jsonify({"payment_id": payment_record.payment_id,
+        "record_id": payment_record.record_id,
+        "amount": float(payment_record.amount),
+        "phone_number": payment_record.phone_number,
+        "status": payment_record.status,
+        "mpesa_receipt_number": payment_record.mpesa_receipt_number
+    }), 200

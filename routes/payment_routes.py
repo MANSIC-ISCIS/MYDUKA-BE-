@@ -31,3 +31,20 @@ def create_payment():
     return jsonify({"message": "Payment created successfully",
         "payment_id": new_payment.payment_id,
         "status": new_payment.status}), 201
+
+# Route to get all payments
+@payment.route("/payments", methods=["GET"])
+def get_payments():
+    payments = Payment.query.all()
+
+    return jsonify([
+        {
+            "payment_id": p.payment_id,
+            "record_id": p.record_id,
+            "amount": float(p.amount),
+            "phone_number": p.phone_number,
+            "status": p.status,
+            "created_at": p.created_at
+        }
+        for p in payments
+    ]), 200

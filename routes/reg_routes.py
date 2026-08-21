@@ -69,15 +69,15 @@ def register_admin(token):
             "error": "Name and password are required"
         }), 400
 
-    user = user(
+    use = user(
         name=name,
         email=invitation.email,
         role="admin"
     )
 
-    user.set_password(password)
+    use.set_password(password)
 
-    db.session.add(user)
+    db.session.add(use)
 
     invitation.used = True
 

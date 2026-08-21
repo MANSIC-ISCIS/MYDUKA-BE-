@@ -4,8 +4,15 @@ from extensions import db
 class StoreAdmin(db.Model):
     __tablename__ = "store_admins"
 
-    admin_id = db.Column(db.Integer, primary_key=True)
-    admin_name = db.Column(db.String(100), nullable=False)
+    admin_id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    admin_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
     merchant_id = db.Column(
         db.Integer,

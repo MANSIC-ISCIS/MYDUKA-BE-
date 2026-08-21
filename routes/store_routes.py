@@ -1,9 +1,18 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models.store import Store
-from schemas.store_schema import store_schema, stores_schema
+from models.merchants import Merchant
+from schemas.store_schema import (
+    store_schema,
+    stores_schema
+)
 
-store_bp = Blueprint("stores", __name__, url_prefix="/api/stores")
+
+store_bp = Blueprint(
+    "stores",
+    __name__,
+    url_prefix="/api/stores"
+)
 
 
 @store_bp.route("/", methods=["POST"])
@@ -11,7 +20,9 @@ def create_store():
     data = request.get_json()
 
     if not data:
-        return jsonify({"error": "Request body is required"}), 400
+        return jsonify({
+            "error": "Request body is required"
+        }), 400
 
     st_name = data.get("st_name")
     location = data.get("location")
@@ -22,12 +33,12 @@ def create_store():
             "error": "st_name, location and merchant_id are required"
         }), 400
 
-    merchant_exists = db.session.get(
-        db.Model.registry._class_registry["Merchant"],
+    merchant = db.session.get(
+        Merchant,
         merchant_id
     )
 
-    if not merchant_exists:
+    if not merchant:
         return jsonify({
             "error": "Merchant not found"
         }), 404
@@ -70,16 +81,34 @@ def get_store(store_id):
     }), 200
 
 
-@store_bp.route("/merchant/<int:merchant_id>", methods=["GET"])
+@store_bp.route(
+    "/merchant/<int:merchant_id>",
+    methods=["GET"]
+)
 def get_merchant_stores(merchant_id):
-    stores = Store.query.filter_by(merchant_id=merchant_id).all()
+    merchant = db.session.get(
+        Merchant,
+        merchant_id
+    )
+
+    if not merchant:
+        return jsonify({
+            "error": "Merchant not found"
+        }), 404
+
+    stores = Store.query.filter_by(
+        merchant_id=merchant_id
+    ).all()
 
     return jsonify({
         "stores": stores_schema.dump(stores)
     }), 200
 
 
-@store_bp.route("/<int:store_id>", methods=["PUT"])
+@store_bp.route(
+    "/<int:store_id>",
+    methods=["PUT"]
+)
 def update_store(store_id):
     store = db.session.get(Store, store_id)
 
@@ -102,6 +131,16 @@ def update_store(store_id):
         store.location = data["location"]
 
     if "merchant_id" in data:
+        merchant = db.session.get(
+            Merchant,
+            data["merchant_id"]
+        )
+
+        if not merchant:
+            return jsonify({
+                "error": "Merchant not found"
+            }), 404
+
         store.merchant_id = data["merchant_id"]
 
     db.session.commit()
@@ -112,7 +151,10 @@ def update_store(store_id):
     }), 200
 
 
-@store_bp.route("/<int:store_id>", methods=["DELETE"])
+@store_bp.route(
+    "/<int:store_id>",
+    methods=["DELETE"]
+)
 def delete_store(store_id):
     store = db.session.get(Store, store_id)
 

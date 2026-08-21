@@ -8,6 +8,7 @@ from schemas.store_admin_schema import (
     store_admins_schema
 )
 
+
 store_admin_bp = Blueprint(
     "store_admins",
     __name__,
@@ -33,14 +34,20 @@ def create_store_admin():
             "error": "admin_name, merchant_id and store_id are required"
         }), 400
 
-    merchant = db.session.get(Merchant, merchant_id)
+    merchant = db.session.get(
+        Merchant,
+        merchant_id
+    )
 
     if not merchant:
         return jsonify({
             "error": "Merchant not found"
         }), 404
 
-    store = db.session.get(Store, store_id)
+    store = db.session.get(
+        Store,
+        store_id
+    )
 
     if not store:
         return jsonify({
@@ -55,7 +62,8 @@ def create_store_admin():
     admin = StoreAdmin(
         admin_name=admin_name,
         merchant_id=merchant_id,
-        store_id=store_id
+        store_id=store_id,
+        is_active=True
     )
 
     db.session.add(admin)
@@ -76,9 +84,15 @@ def get_store_admins():
     }), 200
 
 
-@store_admin_bp.route("/<int:admin_id>", methods=["GET"])
+@store_admin_bp.route(
+    "/<int:admin_id>",
+    methods=["GET"]
+)
 def get_store_admin(admin_id):
-    admin = db.session.get(StoreAdmin, admin_id)
+    admin = db.session.get(
+        StoreAdmin,
+        admin_id
+    )
 
     if not admin:
         return jsonify({
@@ -90,9 +104,15 @@ def get_store_admin(admin_id):
     }), 200
 
 
-@store_admin_bp.route("/merchant/<int:merchant_id>", methods=["GET"])
+@store_admin_bp.route(
+    "/merchant/<int:merchant_id>",
+    methods=["GET"]
+)
 def get_merchant_admins(merchant_id):
-    merchant = db.session.get(Merchant, merchant_id)
+    merchant = db.session.get(
+        Merchant,
+        merchant_id
+    )
 
     if not merchant:
         return jsonify({
@@ -108,9 +128,15 @@ def get_merchant_admins(merchant_id):
     }), 200
 
 
-@store_admin_bp.route("/store/<int:store_id>", methods=["GET"])
+@store_admin_bp.route(
+    "/store/<int:store_id>",
+    methods=["GET"]
+)
 def get_store_admins_by_store(store_id):
-    store = db.session.get(Store, store_id)
+    store = db.session.get(
+        Store,
+        store_id
+    )
 
     if not store:
         return jsonify({
@@ -126,9 +152,15 @@ def get_store_admins_by_store(store_id):
     }), 200
 
 
-@store_admin_bp.route("/<int:admin_id>", methods=["PUT"])
+@store_admin_bp.route(
+    "/<int:admin_id>",
+    methods=["PUT"]
+)
 def update_store_admin(admin_id):
-    admin = db.session.get(StoreAdmin, admin_id)
+    admin = db.session.get(
+        StoreAdmin,
+        admin_id
+    )
 
     if not admin:
         return jsonify({
@@ -142,39 +174,46 @@ def update_store_admin(admin_id):
             "error": "Request body is required"
         }), 400
 
+    new_merchant_id = data.get(
+        "merchant_id",
+        admin.merchant_id
+    )
+
+    new_store_id = data.get(
+        "store_id",
+        admin.store_id
+    )
+
+    merchant = db.session.get(
+        Merchant,
+        new_merchant_id
+    )
+
+    if not merchant:
+        return jsonify({
+            "error": "Merchant not found"
+        }), 404
+
+    store = db.session.get(
+        Store,
+        new_store_id
+    )
+
+    if not store:
+        return jsonify({
+            "error": "Store not found"
+        }), 404
+
+    if store.merchant_id != new_merchant_id:
+        return jsonify({
+            "error": "Store does not belong to this merchant"
+        }), 400
+
     if "admin_name" in data:
         admin.admin_name = data["admin_name"]
 
-    if "merchant_id" in data:
-        merchant = db.session.get(
-            Merchant,
-            data["merchant_id"]
-        )
-
-        if not merchant:
-            return jsonify({
-                "error": "Merchant not found"
-            }), 404
-
-        admin.merchant_id = data["merchant_id"]
-
-    if "store_id" in data:
-        store = db.session.get(
-            Store,
-            data["store_id"]
-        )
-
-        if not store:
-            return jsonify({
-                "error": "Store not found"
-            }), 404
-
-        if store.merchant_id != admin.merchant_id:
-            return jsonify({
-                "error": "Store does not belong to this merchant"
-            }), 400
-
-        admin.store_id = data["store_id"]
+    admin.merchant_id = new_merchant_id
+    admin.store_id = new_store_id
 
     db.session.commit()
 
@@ -189,14 +228,17 @@ def update_store_admin(admin_id):
     methods=["PATCH"]
 )
 def deactivate_store_admin(admin_id):
-    admin = db.session.get(StoreAdmin, admin_id)
+    admin = db.session.get(
+        StoreAdmin,
+        admin_id
+    )
 
     if not admin:
         return jsonify({
             "error": "Store admin not found"
         }), 404
 
-    db.session.delete(admin)
+    admin.is_active = False
     db.session.commit()
 
     return jsonify({
@@ -204,9 +246,38 @@ def deactivate_store_admin(admin_id):
     }), 200
 
 
-@store_admin_bp.route("/<int:admin_id>", methods=["DELETE"])
+@store_admin_bp.route(
+    "/<int:admin_id>/activate",
+    methods=["PATCH"]
+)
+def activate_store_admin(admin_id):
+    admin = db.session.get(
+        StoreAdmin,
+        admin_id
+    )
+
+    if not admin:
+        return jsonify({
+            "error": "Store admin not found"
+        }), 404
+
+    admin.is_active = True
+    db.session.commit()
+
+    return jsonify({
+        "message": "Store admin activated successfully"
+    }), 200
+
+
+@store_admin_bp.route(
+    "/<int:admin_id>",
+    methods=["DELETE"]
+)
 def delete_store_admin(admin_id):
-    admin = db.session.get(StoreAdmin, admin_id)
+    admin = db.session.get(
+        StoreAdmin,
+        admin_id
+    )
 
     if not admin:
         return jsonify({

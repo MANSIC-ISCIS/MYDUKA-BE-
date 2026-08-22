@@ -1,3 +1,4 @@
+from .clerk import Clerk
 from models.merchants import Merchant
 from models.store import Store
 from models.store_admin import StoreAdmin

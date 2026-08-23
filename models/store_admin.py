@@ -2,7 +2,7 @@ from extensions import db
 
 
 class StoreAdmin(db.Model):
-    __tablename__ = "store_admins"
+    __tablename__ = "store_admin"
 
     admin_id = db.Column(
         db.Integer,
@@ -30,16 +30,6 @@ class StoreAdmin(db.Model):
         db.Boolean,
         default=True,
         nullable=False
-    )
-
-    merchant = db.relationship(
-        "Merchant",
-        back_populates="admins"
-    )
-
-    store = db.relationship(
-        "Store",
-        back_populates="admins"
     )
 
     def __repr__(self):

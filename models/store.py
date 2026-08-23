@@ -11,7 +11,7 @@ class Store(db.Model):
 
     merchant_id = db.Column(
         db.Integer,
-        db.ForeignKey("merchants.merchant_id"),
+        db.ForeignKey("users.id"),
         nullable=False
     )
 

@@ -10,9 +10,9 @@ def create_record():
     data = request.get_json()
 
     required_fields = ["clerk_id", "product_id",
-        "items_received", "items_in_stock",
-        "buying_price","selling_price",
-        "store_id","admin_id"]
+        "items_received", "items_in_stock", "items_spoilt",
+        "buying_price","selling_price", "payment_status",
+        "store_id","admin_id", "supplier_id"]
 
     for field in required_fields:
         if field not in data:
@@ -20,16 +20,21 @@ def create_record():
 
     new_record = Record(clerk_id=data["clerk_id"],
         product_id=data["product_id"],
-        items_received=data["items_received"], items_in_stock=data["items_in_stock"],
+        items_received=data["items_received"], 
+        items_in_stock=data["items_in_stock"],
         items_spoilt=data.get("items_spoilt", 0),
-        buying_price=data["buying_price"], selling_price=data["selling_price"],
-        store_id=data["store_id"], admin_id=data["admin_id"], supplier_id=data.get("supplier_id", None))
+        buying_price=data["buying_price"], 
+        selling_price=data["selling_price"],
+        payment_status=data.get("payment_status", "unpaid"),
+        store_id=data["store_id"], 
+        admin_id=data["admin_id"], 
+        supplier_id=data.get("supplier_id", None))
 
     db.session.add(new_record)
     db.session.commit()
 
     return jsonify({"message": "Record created successfully",
-        "record_id": new_record.record_id}), 201
+        }), 201
 
 # Route to get all records
 @records_bp.route("/records", methods=["GET"])

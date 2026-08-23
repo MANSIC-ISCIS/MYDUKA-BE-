@@ -22,7 +22,7 @@ class StoreAdmin(db.Model):
 
     store_id = db.Column(
         db.Integer,
-        db.ForeignKey("stores.store_id"),
+        db.ForeignKey("store.store_id"),
         nullable=False
     )
 

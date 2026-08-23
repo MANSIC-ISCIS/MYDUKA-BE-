@@ -5,56 +5,6 @@ from schemas.merchant_schema import merchant_schema, merchants_schema
 
 merchants_bp = Blueprint("merchants", __name__, url_prefix="/api/merchants")
 
-
-@merchants_bp.route("/", methods=["POST"])
-def create_merchant():
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "Request body is required"}), 400
-
-    merchant_name = data.get("merchant_name")
-    email = data.get("email")
-    password = data.get("password")
-
-    if not merchant_name or not email or not password:
-        return jsonify({
-            "error": "merchant_name, email and password are required"
-        }), 400
-
-    existing_merchant = Merchant.query.filter_by(email=email).first()
-
-    if existing_merchant:
-        return jsonify({
-            "error": "A merchant with this email already exists"
-        }), 409
-
-    merchant = Merchant(
-        merchant_name=merchant_name,
-        email=email,
-        password=password,
-        role="merchant",
-        is_active=True
-    )
-
-    db.session.add(merchant)
-    db.session.commit()
-
-    return jsonify({
-        "message": "Merchant created successfully",
-        "merchant": merchant_schema.dump(merchant)
-    }), 201
-
-
-@merchants_bp.route("/", methods=["GET"])
-def get_merchants():
-    merchants = Merchant.query.all()
-
-    return jsonify({
-        "merchants": merchants_schema.dump(merchants)
-    }), 200
-
-
 @merchants_bp.route("/<int:merchant_id>", methods=["GET"])
 def get_merchant(merchant_id):
     merchant = Merchant.query.get(merchant_id)

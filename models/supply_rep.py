@@ -1,5 +1,5 @@
 from datetime import datetime
-from db import db
+from extension import db
 
 class SupplyRequest(db.Model):
     __tablename__ = 'supply_requests'
@@ -14,6 +14,4 @@ class SupplyRequest(db.Model):
     quantity_requested = db.Column(db.Integer, nullable=False)
     reason = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(50), default='Pending')
-    reviewed_by = db.Column(db.Integer, db.ForeignKey('store_admins.admin_id'), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    reviewed_at = db.Column(db.DateTime, nullable=True)
+  

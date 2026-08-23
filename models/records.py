@@ -18,7 +18,3 @@ class Record(db.Model):
     store_id = db.Column(db.Integer,db.ForeignKey("stores.store_id"),nullable=False)
     admin_id = db.Column(db.String(50), db.ForeignKey("store_admins.admin_id"),nullable=False)
     supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.supplier_id"), nullable=False)
-
-# Set up relationships
-    payments = db.relationship("Payment", back_populates="record")
-    product = db.relationship("Product", back_populates="records")

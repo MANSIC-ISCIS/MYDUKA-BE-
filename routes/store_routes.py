@@ -11,7 +11,7 @@ from schemas.store_schema import (
 store_bp = Blueprint(
     "stores",
     __name__,
-    url_prefix="/api/stores"
+    url_prefix="/stores"
 )
 
 
@@ -38,10 +38,6 @@ def create_store():
         merchant_id
     )
 
-    if not merchant:
-        return jsonify({
-            "error": "Merchant not found"
-        }), 404
 
     store = Store(
         st_name=st_name,

@@ -1,52 +1,53 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 
-from extensions import db, jwt
 from config import Config
+from extensions import db, jwt, ma, migrate
 
-from routes.auth_routes import auth_bp
-from routes.merchants_routes import merchant_bp
-from routes.store_admin_routes import admin_bp
-from routes.clerks_routes import clerk_bp
-from routes.products_routes import product_bp
-from routes.payment_routes import payment_bp
-from routes.records_routes import records_bp
+# Import models so SQLAlchemy registers them
+from models.merchants import Merchant
+from models.store import Store
+from models.store_admin import StoreAdmin
+
+# Import your blueprints
+from routes.merchants_routes import merchants_bp
 from routes.store_routes import store_bp
-
-app = Flask(__name__)
-
-app.config.from_object(Config)
-
-# =========================================================
-# INITIALIZE EXTENSIONS
-# =========================================================
-
-db.init_app(app)
-jwt.init_app(app)
-
-CORS(app, origins="*", supports_credentials=True)
+from routes.store_admin_routes import store_admin_bp
 
 
-# =========================================================
-# REGISTER BLUEPRINTS
-# =========================================================
+def create_app():
+    app = Flask(__name__)
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(merchant_bp)
-app.register_blueprint(admin_bp)
-app.register_blueprint(clerk_bp)
-app.register_blueprint(product_bp)
-app.register_blueprint(payment_bp)
-app.register_blueprint(records_bp)
-app.register_blueprint(store_bp)
+    # Configuration
+    app.config.from_object(Config)
 
-@app.route("/")
-def home():
+    # Extensions
+    db.init_app(app)
+    jwt.init_app(app)
+    ma.init_app(app)
+    migrate.init_app(app, db)
 
-    return jsonify({
-        "message": "MyDuka API is running"
-    })
+    # CORS
+    CORS(app)
+
+    # Register your blueprints
+    app.register_blueprint(merchants_bp)
+    app.register_blueprint(store_bp)
+    app.register_blueprint(store_admin_bp)
+
+    @app.route("/")
+    def home():
+        return {
+            "message": "MyDuka Backend API is running"
+        }, 200
+
+    @app.route("/health")
+    def health():
+        return {
+            "status": "healthy"
+        }, 200
+
+    return app
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+app = create_app()

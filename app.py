@@ -42,7 +42,7 @@ jwt.init_app(app)
 ma.init_app(app)
 CORS(app,
      supports_credentials=True,
-     resources={r"/*": {"origins": "https://myduka-fe-cfd9.vercel.app"}}, 
+     resources={r"/*": {"origins": "https://myduka-fe-mu.vercel.app"}}, 
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     )

@@ -40,7 +40,12 @@ app.config.from_object(Config)
 db.init_app(app)
 jwt.init_app(app)
 ma.init_app(app)
-CORS(app, origins="*", supports_credentials=True)
+CORS(app,
+     supports_credentials=True,
+     resources={r"/*": {"origins": "https://myduka-fe-cfd9.vercel.app"}}, 
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
 
 # =========================================================
 # REGISTER BLUEPRINTS

@@ -40,10 +40,7 @@ app.config.from_object(Config)
 db.init_app(app)
 jwt.init_app(app)
 ma.init_app(app)
-CORS(app,
-     resources={r"/*": {"origins": "https://myduka-fe-mu.vercel.app"}}, 
-     allow_headers=["Content-Type", "Authorization"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+CORS(app
     )
 
 # =========================================================

@@ -15,7 +15,7 @@ store_bp = Blueprint(
 )
 
 
-@store_bp.route("/", methods=["POST"])
+@store_bp.route("/stores", methods=["POST"])
 def create_store():
     data = request.get_json()
 
@@ -24,13 +24,23 @@ def create_store():
             "error": "Request body is required"
         }), 400
 
-    st_name = data.get("st_name")
+    st_name = data.get("name") or data.get("st_name")
     location = data.get("location")
-    merchant_id = data.get("merchant_id")
+    merchant_id = data.get("merchantid") or data.get("merchant_id")
 
-    if not st_name or not location or not merchant_id:
+    if not st_name:
         return jsonify({
-            "error": "st_name, location and merchant_id are required"
+            "error": "st_name are required"
+        }), 400
+
+    if not location: 
+        return jsonify({
+            "error": "location are required"
+        }), 400
+
+    if not merchant_id:
+        return jsonify({
+            "error": "merchant_id are required"
         }), 400
 
     merchant = db.session.get(
@@ -54,7 +64,7 @@ def create_store():
     }), 201
 
 
-@store_bp.route("/", methods=["GET"])
+@store_bp.route("/stores", methods=["GET"])
 def get_stores():
     stores = Store.query.all()
 
@@ -63,7 +73,7 @@ def get_stores():
     }), 200
 
 
-@store_bp.route("/<int:store_id>", methods=["GET"])
+@store_bp.route("/stores/<int:store_id>", methods=["GET"])
 def get_store(store_id):
     store = db.session.get(Store, store_id)
 
@@ -102,7 +112,7 @@ def get_merchant_stores(merchant_id):
 
 
 @store_bp.route(
-    "/<int:store_id>",
+    "/stores/<int:store_id>",
     methods=["PUT"]
 )
 def update_store(store_id):
@@ -148,7 +158,7 @@ def update_store(store_id):
 
 
 @store_bp.route(
-    "/<int:store_id>",
+    "/stores/<int:store_id>",
     methods=["DELETE"]
 )
 def delete_store(store_id):
